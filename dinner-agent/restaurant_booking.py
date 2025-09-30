@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 
 from stagehand import Stagehand, StagehandConfig
 
+# Load environment variables and set MODEL_API_KEY
 load_dotenv()
+os.environ['MODEL_API_KEY'] = os.getenv('OPENAI_API_KEY')
 
 
 class RestaurantBooking:
@@ -19,7 +21,7 @@ class RestaurantBooking:
             api_key=os.getenv("BROWSERBASE_API_KEY"),
             project_id=os.getenv("BROWSERBASE_PROJECT_ID"),
             model_name="gpt-4o",
-            model_client_options={"apiKey": os.getenv("OPENAI_API_KEY")}
+            model_client_options={"apiKey": os.getenv("MODEL_API_KEY")}
         )
     
     async def init_browser(self):

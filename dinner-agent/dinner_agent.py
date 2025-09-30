@@ -4,12 +4,13 @@ import asyncio
 from typing import Dict, List, Optional
 from dotenv import load_dotenv
 
+# Load environment variables first
+load_dotenv()
+
 from agentmail import AgentMail
 from participant_tracker import ParticipantTracker, DinnerEvent
 from cuisine_selector import CuisineSelector
 from restaurant_booking import RestaurantBooking
-
-load_dotenv()
 
 
 class DinnerAgent:
@@ -60,7 +61,7 @@ class DinnerAgent:
         ]
         
         combined_text = f"{subject} {body}".lower()
-        return any(keyword in combined_text for keyword in keywords)
+        return any(keyword in combined_text for keyword in rsvp_keywords)
     
     def _handle_new_dinner_request(self, from_email: str, subject: str, body: str) -> str:
         """Handle new dinner planning request"""
@@ -178,8 +179,16 @@ Current RSVPs: {confirmed_count}/{event.min_confirmations} people confirmed
             if self.participant_tracker.is_ready_to_book(event_id):
                 response += "🎉 We have enough confirmations! I'm now booking the restaurant...\n\n"
                 
-                # Trigger booking process asynchronously
-                asyncio.create_task(self._book_restaurant_for_event(event_id))
+                # Trigger booking process in a new thread with its own event loop
+                import threading
+                def run_booking():
+                    try:
+                        asyncio.run(self._book_restaurant_for_event(event_id))
+                    except Exception as e:
+                        print(f"Error in booking thread: {e}")
+                
+                booking_thread = threading.Thread(target=run_booking, daemon=True)
+                booking_thread.start()
                 
                 response += "I'll send confirmation details to everyone once the booking is complete!"
             else:
@@ -409,9 +418,9 @@ Bon appétit!
             
             # Send to all participants
             for email in participant_emails:
-                self.agentmail.messages.send(
+                self.agentmail.inboxes.messages.send(
                     inbox_id=self.inbox,
-                    to=email,
+                    to=[email],
                     subject=f"Dinner Confirmed - {booking_result['restaurant_name']}",
                     text=confirmation_message
                 )
@@ -433,9 +442,9 @@ Please try booking manually or contact me with alternative preferences. I'll do 
 - Dinner Agent"""
             
             for email in participant_emails:
-                self.agentmail.messages.send(
+                self.agentmail.inboxes.messages.send(
                     inbox_id=self.inbox,
-                    to=email,
+                    to=[email],
                     subject="Dinner Booking Issue - Manual Action Needed",
                     text=failure_message
                 )

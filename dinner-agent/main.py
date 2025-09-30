@@ -63,12 +63,12 @@ Body:
         print("-" * 50)
         
         # Send reply
-        dinner_agent.agentmail.messages.reply(
-            inbox_id=inbox, 
-            message_id=email["message_id"], 
+        print(f"📤 Sending reply to {email['from']}...")
+        dinner_agent.agentmail.inboxes.messages.reply(
+            inbox_id=inbox,
+            message_id=email["message_id"],
             text=response
         )
-        
         print("✅ Reply sent successfully\n")
         
     except Exception as e:
@@ -82,7 +82,7 @@ Please try again or contact support if the issue persists.
 
 - Dinner Agent 🍽️"""
             
-            dinner_agent.agentmail.messages.reply(
+            dinner_agent.agentmail.inboxes.messages.reply(
                 inbox_id=inbox,
                 message_id=email["message_id"],
                 text=error_message
