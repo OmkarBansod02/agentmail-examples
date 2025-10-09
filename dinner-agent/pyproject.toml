@@ -1,0 +1,18 @@
+[project]
+name = "agentmail-dinner-agent"
+version = "0.1.0"
+description = "AgentMail dinner booking agent with OpenTable automation"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "agentmail>=0.0.19",
+    "agentmail-toolkit>=0.1.8",
+    "asyncio>=3.4.3",
+    "flask>=3.1.0",
+    "ngrok>=1.4.0",
+    "openai-agents>=0.0.9",
+    "stagehand-py>=0.3.10",
+    "python-dotenv>=1.0.0",
+    "requests>=2.31.0",
+    "pydantic>=2.0.0",
+]
