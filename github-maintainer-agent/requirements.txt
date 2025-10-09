@@ -1,0 +1,10 @@
+openai
+agentmail
+agentmail-toolkit
+flask
+python-dotenv
+pyngrok
+ngrok
+agents
+requests
+beautifulsoup4
